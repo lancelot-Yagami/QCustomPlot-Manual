@@ -8,3 +8,4 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../qcustomplot)
 link_directories(${ROOT_PATH}/bin)
 
 add_subdirectory(001_start)
+add_subdirectory(003_bar_chart_demo)

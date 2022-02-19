@@ -9,10 +9,10 @@ set(-DQCUSTOMPLOT_COMPILE_LIBRARY)
 find_package(Qt5Widgets)
 find_package(Qt5PrintSupport)
 
-set(INCLUDE_FILES qcustomplot.h)
-set(SOURCE_FILES qcustomplot.cpp)
+file(GLOB ALL_SOURCES "*.cpp" "*.c")
+file(GLOB ALL_INCLUDES "*.hpp" "*.h")
 
-add_library(${PROJECT_NAME} SHARED ${INCLUDE_FILES} ${SOURCE_FILES})
+add_library(${PROJECT_NAME} SHARED ${ALL_INCLUDES} ${ALL_SOURCES})
 add_library(${PROJECT_NAME}_static STATIC $<TARGET_OBJECTS:${PROJECT_NAME}>)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
