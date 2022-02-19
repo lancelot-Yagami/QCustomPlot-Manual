@@ -1,0 +1,7 @@
+bin/
+build*
+.vs/
+out*
+
+*.txt.user
+*.autosave
