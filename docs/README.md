@@ -14,6 +14,10 @@
 > 
 > 就十块卖给你了
 
+# 注意事项
+
+博客上的代码不是最新的，请以[源码](https://github.com/lancelot-Yagami/QCustomPlot-Manual.git)的地址为准
+
 # 博客教程
 
 - [安静阅读地址](https://lancelot-yagami.github.io/QCustomPlot-Manual)
