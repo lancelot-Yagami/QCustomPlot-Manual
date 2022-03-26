@@ -10,4 +10,5 @@ link_directories(${ROOT_PATH}/bin)
 add_subdirectory(001_start)
 add_subdirectory(003_bar_chart_demo)
 add_subdirectory(004_layout_demo)
+add_subdirectory(005_axisrect_demo)
 
