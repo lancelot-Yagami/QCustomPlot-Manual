@@ -11,4 +11,5 @@ add_subdirectory(001_start)
 add_subdirectory(003_bar_chart_demo)
 add_subdirectory(004_layout_demo)
 add_subdirectory(005_axisrect_demo)
+add_subdirectory(006_dynamic_data_demo)
 
