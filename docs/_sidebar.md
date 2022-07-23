@@ -5,3 +5,4 @@
 * [QCustomPlot之层和布局（四）](zh-cn/QCustomPlot之层和布局（四） "QCustomPlot之层和布局（四）")
 * [QCustomPlot之轴矩形和轴（五）](zh-cn/QCustomPlot之轴矩形和轴（五） "QCustomPlot之轴矩形和轴（五）")
 * [QCustomPlot之简单动态图（六）](zh-cn/QCustomPlot之简单动态图（六） "QCustomPlot之简单动态图（六）")
+* [QCustomPlot之参数曲线（七）](zh-cn/QCustomPlot之参数曲线（七） "QCustomPlot之参数曲线（七）")
