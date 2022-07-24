@@ -5,6 +5,7 @@
 
 class QCP_LIB_DECL QCPTextBars : public QCPBars
 {
+    Q_OBJECT
 public:
     explicit QCPTextBars(QCPAxis *keyAxis, QCPAxis *valueAxis);
 

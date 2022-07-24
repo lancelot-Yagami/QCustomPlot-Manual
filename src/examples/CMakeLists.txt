@@ -13,4 +13,5 @@ add_subdirectory(004_layout_demo)
 add_subdirectory(005_axisrect_demo)
 add_subdirectory(006_dynamic_data_demo)
 add_subdirectory(007_lemniscate_demo)
+add_subdirectory(008_smooth_graph_demo_01)
 
