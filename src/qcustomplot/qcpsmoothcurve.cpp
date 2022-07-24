@@ -201,7 +201,7 @@ void QCPSmoothCurve::drawFill(QCPPainter *painter, QVector<QPointF> *lines) cons
             QVector<QCPDataRange> otherSegments = getNonNanSegments(&otherLines, channelFillGraph->keyAxis()->orientation());
             QVector<QPair<QCPDataRange, QCPDataRange> > segmentPairs = getOverlappingSegments(segments, lines, otherSegments, &otherLines);
             for (int i=0; i<segmentPairs.size(); ++i) {
-                if (mSmooth && mLineStyle == lsLine && channelFillGraph->mLineStyle == lsLine)
+                if ((mLineStyle == lsLine && channelFillGraph->mLineStyle == lsLine) && (mSmooth || channelFillGraph->mSmooth))
                     painter->drawPath(getSmoothChannelFillPath(lines, segmentPairs.at(i).first, &otherLines, segmentPairs.at(i).second));  // 平滑曲线
                 else
                     painter->drawPolygon(getChannelFillPolygon(lines, segmentPairs.at(i).first, &otherLines, segmentPairs.at(i).second));   // 折线
@@ -279,7 +279,10 @@ QPainterPath QCPSmoothCurve::getSmoothChannelFillPath(const QVector<QPointF> *th
     QVector<QPointF> *croppedData = &otherSegmentData;
 
     //! [1] 以下为添加的内容
-    result = SmoothCurveGenerator::generateSmoothCurve(thisSegmentData);
+    if (mSmooth)
+        result = SmoothCurveGenerator::generateSmoothCurve(thisSegmentData);
+    else
+        result.addPolygon(thisSegmentData);
     if (channelFillGraph->mSmooth && channelFillGraph->mLineStyle == lsLine) {  // mChannelFillGraph也是平滑曲线
         QVector<QPointF> otherSegmentDataReverse(otherSegmentData.size());
         for (int i = otherSegmentData.size() - 1; i >= 0; --i)
