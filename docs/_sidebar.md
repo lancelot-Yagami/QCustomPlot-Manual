@@ -8,3 +8,4 @@
 * [QCustomPlot之参数曲线（七）](zh-cn/QCustomPlot之参数曲线（七） "QCustomPlot之参数曲线（七）")
 * [QCustomPlot之平滑曲线上（八）](zh-cn/QCustomPlot之平滑曲线上（八） "QCustomPlot之平滑曲线上（八）")
 * [QCustomPlot之平滑曲线下（九）](zh-cn/QCustomPlot之平滑曲线下（九） "QCustomPlot之平滑曲线下（九）")
+* [QCustomPlot之Item（十）](zh-cn/QCustomPlot之Item（十） "QCustomPlot之Item（十）")
