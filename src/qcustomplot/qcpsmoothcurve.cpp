@@ -27,19 +27,7 @@ protected:
 public:
     static QPainterPath generateSmoothCurve(const QVector<QPointF> &points) {
         QPainterPath result;
-
-        int segmentStart = 0;
-        int i = 0;
-        int pointSize = points.size();
-        while (i < pointSize) {
-            if (qIsNaN(points.at(i).y()) || qIsNaN(points.at(i).x()) || qIsInf(points.at(i).y())) {
-                QVector<QPointF> lineData(QVector<QPointF>(points.constBegin() + segmentStart, points.constBegin() + i - segmentStart));
-                result.addPath(generateSmoothCurveImp(lineData));
-                segmentStart = i + 1;
-            }
-            ++i;
-        }
-        QVector<QPointF> lineData(QVector<QPointF>(points.constBegin() + segmentStart, points.constEnd()));
+        QVector<QPointF> lineData(QVector<QPointF>(points.constBegin(), points.constEnd()));
         result.addPath(generateSmoothCurveImp(lineData));
         return result;
     }
@@ -86,8 +74,8 @@ public:
     }
 
     static void calculateControlPoints(const QVector<QPointF> &knots,
-                                                       QVector<QPointF> *firstControlPoints,
-                                                       QVector<QPointF> *secondControlPoints) {
+                                       QVector<QPointF> *firstControlPoints,
+                                       QVector<QPointF> *secondControlPoints) {
         int n = knots.size() - 1;
 
         firstControlPoints->reserve(n);
@@ -160,12 +148,49 @@ QCPSmoothCurve::QCPSmoothCurve(QCPAxis *keyAxis, QCPAxis *valueAxis)
 
 }
 
+void QCPSmoothCurve::draw(QCPPainter *painter)
+{
+    if (!mKeyAxis || !mValueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return; }
+    if (mKeyAxis.data()->range().size() <= 0 || mDataContainer->isEmpty()) return;
+    if (mLineStyle == lsNone && mScatterStyle.isNone()) return;
+
+    if (mSmooth && mLineStyle == lsLine) {
+        QVector<QCPGraphData> data(mDataContainer->begin(), mDataContainer->end());
+        mLines = dataToLines(data);
+        mSegments = getNonNanSegments(&mLines, mKeyAxis->orientation());
+        mSmoothPaths = QVector<QPainterPath>();
+        mSmoothPaths.reserve(mSegments.count());
+        for (int i = 0; i < mSegments.count(); ++i) {
+            const auto& segment = mSegments.at(i);
+            QVector<QPointF> points(mLines.constBegin() + segment.begin(), mLines.constBegin() + segment.end());
+            mSmoothPaths.append(SmoothCurveGenerator::generateSmoothCurve(points));
+        }
+        qDebug() << mSegments.count() << mSmoothPaths.count() << mLines.count();
+    }
+
+    QCPGraph::draw(painter);
+
+    mSegments = QVector<QCPDataRange>();
+    mSmoothPaths = QVector<QPainterPath>();
+    mLines = QVector<QPointF>();
+}
+
 void QCPSmoothCurve::drawLinePlot(QCPPainter *painter, const QVector<QPointF> &lines) const
 {
     if (painter->pen().style() != Qt::NoPen && painter->pen().color().alpha() != 0) {
         applyDefaultAntialiasingHint(painter);
-        if (mSmooth && mLineStyle == lsLine)
-            painter->drawPath(SmoothCurveGenerator::generateSmoothCurve(lines));
+        if (mSmooth && mLineStyle == lsLine) {
+            QPainterPath clipPath = painter->clipPath();
+            QPainterPath clipRect = getLinesClipPath(lines);
+
+            painter->setClipPath(clipPath.intersected(clipRect));
+            for (int i = 0; i < mSmoothPaths.count(); ++i) {
+                if (mSmoothPaths.at(i).intersects(clipRect))
+                    painter->drawPath(mSmoothPaths.at(i));
+            }
+
+            painter->setClipPath(clipPath);
+        }
         else
             drawPolyline(painter, lines);
     }
@@ -182,8 +207,14 @@ void QCPSmoothCurve::drawFill(QCPPainter *painter, QVector<QPointF> *lines) cons
     {
         // draw base fill under graph, fill goes all the way to the zero-value-line:
         for (int i=0; i<segments.size(); ++i)
-            if (mSmooth && mLineStyle == lsLine)
-                painter->drawPath(getSmoothFillPath(lines, segments.at(i)));   // 平滑曲线
+            if (mSmooth && mLineStyle == lsLine) {
+                QPainterPath clipPath = painter->clipPath();
+                QPainterPath clipRect;
+                auto path = getSmoothFillPath(lines, segments.at(i), &clipRect);
+                painter->setClipPath(clipPath.intersected(clipRect));
+                painter->drawPath(path);   // 平滑曲线
+                painter->setClipPath(clipPath);
+            }
             else
                 painter->drawPolygon(getFillPolygon(lines, segments.at(i)));   // 折线
     } else   // 与其它QCPGraph围成的区域
@@ -210,45 +241,30 @@ void QCPSmoothCurve::drawFill(QCPPainter *painter, QVector<QPointF> *lines) cons
     }
 }
 
-void QCPSmoothCurve::getOptimizedLineData(QVector<QCPGraphData> *lineData, const QCPGraphDataContainer::const_iterator &begin,
-                                          const QCPGraphDataContainer::const_iterator &end) const
-{
-    if (!mSmooth)
-        return QCPGraph::getOptimizedLineData(lineData, begin, end);
-
-    /// 对于平滑曲线，不优化线数据，并且总是使用全部的数据来计算平滑曲线以避免放大的时候突变成直线
-    /// 如果你觉得不合适，可以不重写此函数
-    if (!lineData) return;
-    QCPAxis *keyAxis = mKeyAxis.data();
-    QCPAxis *valueAxis = mValueAxis.data();
-    if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return; }
-
-    auto dataBegin = mDataContainer->begin();
-    auto dataEnd = mDataContainer->end();
-
-    if (dataBegin == dataEnd) return;
-
-    auto dataCount = int(dataEnd - dataBegin);
-    lineData->resize(dataCount);
-    std::copy(dataBegin, dataEnd, lineData->begin());
-}
-
-QPainterPath QCPSmoothCurve::getSmoothFillPath(const QVector<QPointF> *lineData, QCPDataRange segment) const
+QPainterPath QCPSmoothCurve::getSmoothFillPath(const QVector<QPointF> *lineData, QCPDataRange segment, QPainterPath *clipPath) const
 {
     // 只有一个点构不成填充区域
     if (segment.size() < 2)
         return QPainterPath();
 
-    // 起点，终点对应在轴上的位置
-    QPointF start = getFillBasePoint(lineData->at(segment.begin()));
-    QPointF end = getFillBasePoint(lineData->at(segment.end() - 1));
+    *clipPath = getLinesClipPath(getFillPolygon(lineData, segment));
 
-    // 将平滑曲线连成一个封闭区域
-    QPainterPath path = SmoothCurveGenerator::generateSmoothCurve(*lineData);
-    path.lineTo(end);
-    path.lineTo(start);
-    path.lineTo(lineData->at(segment.begin()));
-    return path;
+    QPainterPath result;
+    for (int i = 0; i < mSmoothPaths.count(); ++i) {
+        QCPDataRange subSegment = mSegments.at(i);
+        if (subSegment.size() < 2)
+            continue;
+
+        QPointF start = getFillBasePoint(mLines.at(subSegment.begin()));
+        QPointF end = getFillBasePoint(mLines.at(subSegment.end() - 1));
+        QPainterPath path = mSmoothPaths.at(i);
+        path.lineTo(end);
+        path.lineTo(start);
+        path.lineTo(mLines.at(subSegment.begin()));
+        result.addPath(path);
+
+    }
+    return result;
 }
 
 QPainterPath QCPSmoothCurve::getSmoothChannelFillPath(const QVector<QPointF> *thisData, QCPDataRange thisSegment,
@@ -404,6 +420,24 @@ QPainterPath QCPSmoothCurve::getSmoothChannelFillPath(const QVector<QPointF> *th
         droppedPath.addRect(QRectF(firstPoint, lastPoint).normalized());
         result -= droppedPath;
         //! [9]
+    }
+    return result;
+}
+
+QPainterPath QCPSmoothCurve::getLinesClipPath(const QPolygonF &polygon) const
+{
+    QPainterPath result;
+    QRectF br = polygon.boundingRect();
+    if (br.isNull()) return result;
+
+    if (mKeyAxis->orientation() == Qt::Horizontal) {
+        QPointF firstPoint = QPointF(br.x(), mValueAxis->coordToPixel(mValueAxis->range().upper));
+        QPointF lastPoint = QPointF(br.x() + br.width(), mValueAxis->coordToPixel(mValueAxis->range().lower));
+        result.addRect(QRectF(firstPoint, lastPoint).normalized());
+    } else {
+        QPointF firstPoint = QPointF(mValueAxis->coordToPixel(mValueAxis->range().lower), br.y());
+        QPointF lastPoint = QPointF(mValueAxis->coordToPixel(mValueAxis->range().upper), br.y() + br.height());
+        result.addRect(QRectF(firstPoint, lastPoint).normalized());
     }
     return result;
 }
