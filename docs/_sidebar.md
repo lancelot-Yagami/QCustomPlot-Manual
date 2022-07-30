@@ -9,3 +9,4 @@
 * [QCustomPlot之平滑曲线上（八）](zh-cn/QCustomPlot之平滑曲线上（八） "QCustomPlot之平滑曲线上（八）")
 * [QCustomPlot之平滑曲线下（九）](zh-cn/QCustomPlot之平滑曲线下（九） "QCustomPlot之平滑曲线下（九）")
 * [QCustomPlot之Item（十）](zh-cn/QCustomPlot之Item（十） "QCustomPlot之Item（十）")
+* [QCustomPlot之Item的移动和缩放（十二）](zh-cn/QCustomPlot之Item的移动和缩放（十二） "QCustomPlot之Item的移动和缩放（十二）")
