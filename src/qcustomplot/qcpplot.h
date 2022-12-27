@@ -3,7 +3,7 @@
 
 #include "qcpsizehandlemanager.h"
 
-class QCPPlot : public QCustomPlot
+class QCP_LIB_DECL QCPPlot : public QCustomPlot
 {
     Q_OBJECT
 public:

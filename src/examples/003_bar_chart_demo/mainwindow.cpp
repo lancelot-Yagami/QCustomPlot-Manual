@@ -19,7 +19,15 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(w);
 
     QStringList items;
-    items << "竖向柱状图" << "横向柱状图" << "竖向堆积图" << "横向堆积图" << "竖向分组图" << "横向分组图" << "竖向文字显示" << "横向文字显示";
+    items << QString::fromLocal8Bit("竖向柱状图")
+          << QString::fromLocal8Bit("横向柱状图")
+          << QString::fromLocal8Bit("竖向堆积图")
+          << QString::fromLocal8Bit("横向堆积图")
+          << QString::fromLocal8Bit("竖向分组图")
+          << QString::fromLocal8Bit("横向分组图")
+          << QString::fromLocal8Bit("竖向文字显示")
+          << QString::fromLocal8Bit("横向文字显示");
+
     QComboBox* comboBox = new QComboBox;
     comboBox->addItems(items);
     connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::setupDemo);

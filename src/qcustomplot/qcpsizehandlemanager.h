@@ -4,7 +4,7 @@
 #include "qcpsizehandle.h"
 
 class QCPSizeHandle;
-class QCPSizeHandleManager : public QCPAbstractItem
+class QCP_LIB_DECL QCPSizeHandleManager : public QCPAbstractItem
 {
     Q_OBJECT
 public:

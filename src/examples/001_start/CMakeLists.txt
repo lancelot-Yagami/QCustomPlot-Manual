@@ -1,8 +1,7 @@
-﻿project(001_start)
+﻿get_filename_component(CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+project(${CURRENT_SOURCE_DIR})
 
 find_package(Qt5Widgets)
-
-#set(-DQCUSTOMPLOT_USE_LIBRARY)
 
 file(GLOB ALL_SOURCES "*.cpp" "*.c")
 file(GLOB ALL_INCLUDES "*.hpp" "*.h")

@@ -26,7 +26,7 @@ void MainWindow::setupStretchItemDemo(QCustomPlot *plot)
     customPlot->sizeHandleManager()->setLineVisible(curve, true);
 
     QCPItemText *text = new QCPItemText(customPlot);
-    text->setText("试着拖动我！");
+    text->setText(QString::fromLocal8Bit("试着拖动我！"));
     customPlot->sizeHandleManager()->addItem(text);
 
     QCPItemBracket *bracket = new QCPItemBracket(customPlot);

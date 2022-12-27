@@ -18,7 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(w);
 
     QStringList items;
-    items << "对齐位置图例" << "自由位置图例" << "图例在QCustomPlot中";
+    items << QString::fromLocal8Bit("对齐位置图例")
+          << QString::fromLocal8Bit("自由位置图例")
+          << QString::fromLocal8Bit("图例在QCustomPlot中");
     QComboBox* comboBox = new QComboBox;
     comboBox->addItems(items);
     connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::setupDemo);
@@ -67,7 +69,7 @@ void MainWindow::setupQuadraticDemo(QCustomPlot *customPlot)
     }
 
     customPlot->addGraph(keyAxis, valueAxis);                                                  // 添加一个曲线图QGraph
-    customPlot->graph(0)->setName("第一个示例");                                        // 设置曲线图的名字，用于QCPLegend显示
+    customPlot->graph(0)->setName(QString::fromLocal8Bit("第一个示例"));                                        // 设置曲线图的名字，用于QCPLegend显示
 
     customPlot->xAxis->setLabel("x");                                                                // 设置x轴的标签
     customPlot->yAxis->setLabel("y");
@@ -80,7 +82,7 @@ void MainWindow::setupLayoutDemo(QCustomPlot* customPlot)
     setupQuadraticDemo(customPlot);
     customPlot->legend->setVisible(true);                                                                                                 // 因为图例默认为隐藏的，所以让其显示
     // 设置图例标题
-    QCPTextElement *title = new QCPTextElement(customPlot, "这是图例标题", QFont("sans", 10, QFont::Bold));
+    QCPTextElement *title = new QCPTextElement(customPlot, QString::fromLocal8Bit("这是图例标题"), QFont("sans", 10, QFont::Bold));
     title->setMargins(QMargins(0, 6, 0, 10));      // 为了效果更好，添加一些边距
     title->setLayer("legend");                     // 一定要把标题的层设置为legend层
     customPlot->legend->insertRow(0);              // 插入一行
@@ -110,7 +112,7 @@ void MainWindow::setupLayoutDemo(QCustomPlot* customPlot)
 
     // 设置图表标题
     customPlot->plotLayout()->insertRow(0);
-    customPlot->plotLayout()->addElement(0, 0, new QCPTextElement(customPlot, "这里是QCustomPlot的标题"));
+    customPlot->plotLayout()->addElement(0, 0, new QCPTextElement(customPlot, QString::fromLocal8Bit("这里是QCustomPlot的标题")));
     customPlot->plotLayout()->setMargins(QMargins(0, 10, 0, 10));
 }
 

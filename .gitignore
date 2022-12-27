@@ -1,7 +1,9 @@
 bin/
 build*
 .vs/
+.idea/
 out*
 
+cmake-build*/
 *.txt.user
 *.autosave

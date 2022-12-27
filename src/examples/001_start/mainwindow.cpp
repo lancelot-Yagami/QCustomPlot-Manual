@@ -20,7 +20,7 @@ void MainWindow::setupQuadraticDemo(QCustomPlot *customPlot)
 
     customPlot->addGraph();                                                  // 添加一个曲线图QGraph
     customPlot->graph(0)->setData(x, y);                             // 为曲线图添加数据
-    customPlot->graph(0)->setName("第一个示例");          // 设置曲线图的名字
+    customPlot->graph(0)->setName(QString::fromLocal8Bit("第一个示例"));          // 设置曲线图的名字
     customPlot->xAxis->setLabel("x");                                 // 设置x轴的标签
     customPlot->yAxis->setLabel("y");
     customPlot->xAxis->setRange(-1, 1);                             // 设置x轴的范围为(-1,1)

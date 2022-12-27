@@ -22,28 +22,28 @@ void MainWindow::setupDynamicData(QCustomPlot *customPlot)
     customPlot->legend->setFillOrder(QCPLayoutGrid::foColumnsFirst); // 横向图例
 
     customPlot->axisRect()->setAutoMargins(QCP::msBottom | QCP::msRight); // 只计算下边距和右边距
-    customPlot->plotLayout()->addElement(0, 0, new QCPTextElement(customPlot, "动态数据", QFont("sans", 12, QFont::Bold)));
+    customPlot->plotLayout()->addElement(0, 0, new QCPTextElement(customPlot, QString::fromLocal8Bit("动态数据"), QFont("sans", 12, QFont::Bold)));
     customPlot->plotLayout()->addElement(0, 1, legendRect);
     customPlot->plotLayout()->setRowStretchFactor(0, 0.1);    // 让其尽可能小一点
     customPlot->plotLayout()->setColumnStretchFactor(0, 0.1);
 
     // 设置柱状图
     QCPBars *bar = new QCPBars(customPlot->xAxis, customPlot->yAxis2);
-    bar->setName("预购队列");
+    bar->setName(QString::fromLocal8Bit("预购队列"));
     bar->setPen(Qt::NoPen);
     bar->setBrush(QColor(194, 53, 49));
 
     // 设置折线图
     QCPGraph *graph = customPlot->addGraph(customPlot->xAxis, customPlot->yAxis);
-    graph->setName("最新成交价");
+    graph->setName(QString::fromLocal8Bit("最新成交价"));
     graph->setPen(QPen(QColor(47, 69, 84), 2));
     graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, QColor(47, 69, 84), QColor(Qt::white), 4));
 
-    customPlot->yAxis->setLabel("价格");
+    customPlot->yAxis->setLabel(QString::fromLocal8Bit("价格"));
     customPlot->yAxis->setRange(0, 30);
     customPlot->yAxis->setSubTicks(false);   // 设置子刻度线不显示
     customPlot->yAxis->setTickLength(0, 6);  // 设置刻度线内外的长度
-    customPlot->yAxis2->setLabel("预购量");
+    customPlot->yAxis2->setLabel(QString::fromLocal8Bit("预购量"));
     customPlot->yAxis2->setVisible(true);
     customPlot->yAxis2->setRange(0, 1200);
     customPlot->yAxis2->setSubTicks(false);
